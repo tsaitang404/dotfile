@@ -40,18 +40,24 @@ SAVEHIST=10000
 
 # 启用语法高亮 (需要 zsh-syntax-highlighting 插件)
 # 为命令语法提供视觉反馈
-if [ -f /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
-    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+if [ -f "$HOME/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+    source "$HOME/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]; then
+    source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # 启用自动建议 (需要 zsh-autosuggestions 插件)
 # 根据历史记录建议命令
-if [ -f /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
-    source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [ -f "$HOME/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+    source "$HOME/.config/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+elif [ -f /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then
+    source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
 
 # 启用 Powerlevel10k 主题 (需要安装 powerlevel10k)
-if [ -f /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme ]; then
+if [ -f "$HOME/.config/zsh/themes/powerlevel10k/powerlevel10k.zsh-theme" ]; then
+    source "$HOME/.config/zsh/themes/powerlevel10k/powerlevel10k.zsh-theme"
+elif [ -f /usr/share/zsh/themes/powerlevel10k/powerlevel10k.zsh-theme ]; then
     source /usr/share/zsh-theme-powerlevel10k/powerlevel10k.zsh-theme
 fi
 
@@ -67,3 +73,12 @@ if [ -d "$HOME/.zshrc.d" ]; then
         [ -r "$script" ] && source "$script"
     done
 fi
+
+# 案件绑定 
+# 绑定 Home 键跳转到行首
+bindkey '^[[H' beginning-of-line
+bindkey '^[[1~' beginning-of-line
+
+# 绑定 End 键跳转到行尾
+bindkey '^[[F' end-of-line
+bindkey '^[[4~' end-of-line

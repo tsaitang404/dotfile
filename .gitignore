@@ -1,8 +1,15 @@
 # 忽略所有文件和文件夹
 *
 
-# 不忽略dot文件
-!.*
-# 不忽略.config下所有文件
-!.config/**
+# 不忽略的dot文件
+!.zshrc
+!.bashrc
+!.vimrc
+!.p10k.zsh
+
+# 不忽略.config下的文件
+!.config/i3/**
+!.config/zsh/**
+!.config/picom/**
+
 

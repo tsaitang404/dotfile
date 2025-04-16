@@ -49,10 +49,9 @@ set sidescrolloff=8 " 光标左右保留8列
 " 设置颜色主题
 colorscheme desert  " 使用desert颜色主题
 
-" 插件管理（如果使用vim-plug）
-" call plug#begin('~/.vim/plugged')
-" Plug '插件名称' " 插件示例
-" call plug#end()
+" 自动保存视图
+autocmd BufWinLeave * mkview
+autocmd BufWinEnter * silent! loadview
 
 " 自定义快捷键
 nnoremap <leader>w :w<CR> " 保存文件

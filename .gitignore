@@ -1,8 +1,11 @@
 # 忽略所有文件和文件夹
 *
-# 不忽略以 . 开头的文件和文件夹
-!.*/
-!.*
 
-# 忽略.cache
-.cache
+# 不忽略dot文件
+!.*
+!.zshrc
+!.p10k.zsh
+!.vimrc
+!.bashrc
+!.config
+

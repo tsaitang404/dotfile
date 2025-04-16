@@ -3,10 +3,6 @@
 
 # 不忽略dot文件
 !.*
-!.zshrc
-!.p10k.zsh
-!.vimrc
-!.bashrc
 # 不忽略.config下所有文件
 !.config/**
 

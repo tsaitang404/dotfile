@@ -1,0 +1,269 @@
+# i3 config file (v4)
+#
+# Please see https://i3wm.org/docs/userguide.html for a complete reference!
+
+# 1. 基本设定
+# 2. 外观
+# 	2.1 边框
+#	2.2 圆角
+# 3. 布局
+# 4. 行为
+# 5. 组件
+# 6. 服务
+# 7. 杂项
+
+#1 =============   基 本 设 定	==============
+
+# Super key2 
+set $mod Mod4
+# Full screen settings
+# for_window [class="FL64"] fullscreen enable
+popup_during_fullscreen smart
+#1.1 ===========     字   体	==============
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+#font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
+font pango:DejaVu Sans Mono 10
+font pango:DejaVu Sans Mono, Terminus Bold Semi-Condensed 11
+font pango:Terminus 11px
+
+#2 =============     外   观   	==============
+#2.1 ===========     边   框	==============
+# Borders
+#for_window [class=".*"] border pixel 1
+#default_border pixel 1
+#default_border none
+#default_floating_border none
+#2.2 ===========     圆   角	==============
+gaps outer 5
+gaps inner 5
+smart_gaps on
+smart_borders no_gaps
+hide_edge_borders smart_no_gaps
+#2.3 ===========     颜	  色	==============
+
+# class                 border  backgr. text    indicator child_border
+client.unfocused        #16161d #16161d #3E3E38 #6a9589 #3E3E38
+client.focused_inactive #16161d #16161d #3E3E38 #6a9589 #3E3E38
+client.focused          #16161d #16161d #c8c093 #c8c093 #c8c093
+# client.focused        #16161d #16161d #3E3E38 #6a9589 #3E3E38
+#3 =============     布   局    ==============
+#3.1 ===========     工 作 区	==============
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws0 "Terminal💻"
+set $ws1 "Chrome😁"
+set $ws2 "Coding🥰"
+set $ws3 "IM😘"
+set $ws4 "Misc🤪"
+set $ws5 "🫡"
+set $ws6 "🤔"
+set $ws7 "😱"
+set $ws8 "😋"
+set $ws9 "😭"
+set $ws10 "💀"
+
+#3.2 ===========   窗 口 固 定  ===============
+# Bitwardn验证
+for_window [title="Bitwarden"] floating enable
+
+#4 =============     行   为    ==============
+# Use pactl to adjust volume in PulseAudio.
+set $refresh_i3status killall -SIGUSR1 i3status
+
+# Change keyboard layout (tr, us, de)
+bindsym $mod+shift+u exec setxkbmap us && notify-send -u low "Keyboard layout: US"
+
+# Systemctl calls
+bindsym $mod+shift+s exec systemctl suspend
+# bindsym $mod+shift+h exec systemctl hibernate
+
+# Start the terminal
+bindsym $mod+Return exec  i3-sensible-terminal
+#bindsym $mod+Retuen exec konsole -e zsh 
+
+# Lock the screen
+bindsym $mod+shift+l exec ~/.config/i3/scripts/lock.sh
+
+# Kill the focused window
+bindsym $mod+Shift+q kill
+
+# Start the dmenu
+bindsym $mod+d exec dmenu_run -nb '#16161d' -nf '#6a9589' -sb '#c8c093' -sf '#21222c' -fn 'pango:monospace:pixelsize=14'
+
+# Change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Move focused window
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Split in horizontal orientation
+bindsym $mod+h split h
+
+# Split in vertical orientation
+bindsym $mod+v split v
+
+# Enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# Toggle status bar
+bindsym $mod+b bar mode toggle
+
+# Change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# Toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# Change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# Focus the parent container
+bindsym $mod+a focus parent
+
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Switch to workspace
+bindsym $mod+grave workspace $ws0
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+bindsym $mod+p workspace prev
+bindsym $mod+n workspace next
+bindsym $mod+Control+1 workspace number 11
+bindsym $mod+Control+2 workspace number 12
+bindsym $mod+Control+3 workspace number 13
+bindsym $mod+Control+4 workspace number 14
+bindsym $mod+Control+5 workspace number 15
+bindsym $mod+Control+6 workspace number 16
+bindsym $mod+Control+7 workspace number 17
+bindsym $mod+Control+8 workspace number 18
+bindsym $mod+Control+9 workspace number 19
+bindsym $mod+Control+0 workspace number 20
+
+# Move focused container to workspace
+bindsym $mod+Shift+grave move container to workspace $ws0
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# 隐藏窗口
+bindsym $mod+Shift+minus move scratchpad
+# 显示隐藏窗口
+bindsym $mod+minus scratchpad show
+# 返回上一工作区
+workspace_auto_back_and_forth yes
+# 开主屏
+bindsym $mod+Home xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} --auto
+# 关主屏
+bindsym $mod+End xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} --off
+# Screen brightness controls
+bindsym XF86MonBrightnessUp exec light -A 10
+bindsym XF86MonBrightnessDown exec light -U 10
+# pulseaudio 音频设置
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# 获取窗口信息
+bindsym $mod+Shift+p exec  ~/.config/i3/scripts/getwindowprop.sh 
+# 退出I3会话
+bindsym Mod1+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+# 重载i3
+bindsym $mod+Shift+c reload
+
+# Restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+
+
+# Resize window (you can also use the mouse for that)
+bindsym $mod+r mode "resize"
+bindsym $mod+Shift+m resize set 1070 px 730 px
+mode "resize" {
+        # These bindings trigger as soon as you enter the resize mode
+
+        # Pressing left will shrink the window’s width.
+        # Pressing right will grow the window’s width.
+        # Pressing up will shrink the window’s height.
+        # Pressing down will grow the window’s height.
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape or $mod+r
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+        bindsym $mod+r mode "default"
+}
+
+#5 =============     组	  件    ==============
+
+# 背景
+exec_always --no-startup-id feh --bg-fill ~/.config/i3/i3-binding.png
+# 启动下拉终端
+exec --no-startup-id tilda
+# Start i3bar to display a workspace bar (plus the system information i3status
+# finds out, if available)
+# 状态栏
+bar {
+  # strip_workspace_numbers yes
+  position top
+  status_command i3status
+  tray_output none
+  colors {
+    statusline #dcd7ba
+    background #16161d
+    focused_workspace #16161d #16161d #c8c093
+    inactive_workspace #16161d #16161d #3E3E38
+  }
+}
+
+
+#6 =============     服   务    ==============
+# 启动网络配置
+exec_always --no-startup-id nm-applet &
+# 启动合成器
+exec --no-startup-id picom -b 
+# fcitx5 输入法
+exec --no-startup-id fcitx5 & 
+#7 =============     杂   项    ==============
+# 同步第二屏幕输出
+exec_always xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^DP[0-9,-]*'}  --auto --same-as ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} 2>&1 > /dev/null
+
+

@@ -7,5 +7,6 @@
 !.p10k.zsh
 !.vimrc
 !.bashrc
-!.config
+# 不忽略.config下所有文件
+!.config/**
 

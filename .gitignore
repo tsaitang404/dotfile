@@ -9,8 +9,11 @@
 !.gitignore
 
 # 不忽略.config下的文件
+!.config/i3
 !.config/i3/**
+!.config/zsh
 !.config/zsh/**
+!.config/picom
 !.config/picom/**
 
 

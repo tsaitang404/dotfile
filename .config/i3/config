@@ -68,8 +68,9 @@ set $ws10 "💀"
 for_window [title="Bitwarden"] floating enable
 
 #4 =============     行   为    ==============
-# Use pactl to adjust volume in PulseAudio.
-set $refresh_i3status killall -SIGUSR1 i3status
+
+# 打开Dolphin
+bindsym $mod+e exec dolphin
 
 # Change keyboard layout (tr, us, de)
 bindsym $mod+shift+u exec setxkbmap us && notify-send -u low "Keyboard layout: US"
@@ -122,8 +123,7 @@ bindsym $mod+b bar mode toggle
 # Change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
-bindsyn $mod+x layout splitv splith
+bindsym $mod+x layout toggle split
 
 # Toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -241,6 +241,9 @@ exec_always --no-startup-id feh --bg-fill ~/.config/i3/i3-binding.png
 exec --no-startup-id tilda
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
+# 刷新i3status
+# 当需要刷新i3status时,发送SIGUSR1信号给所有i3status进程
+set $refresh_i3status killall -SIGUSR1 i3status
 # 状态栏
 bar {
   # strip_workspace_numbers yes

@@ -66,11 +66,17 @@ set $ws10 "💀"
 #3.2 ===========   窗 口 固 定  ===============
 # Bitwardn验证
 for_window [title="Bitwarden"] floating enable
+# spectacle      
+for_window [class="spectacle"] floating enable
 
 #4 =============     行   为    ==============
 
 # 打开Dolphin
 bindsym $mod+e exec dolphin
+
+# 截图
+bindsym $mod+Shift+m exec spectacle
+bindsym Print	exec spectacle
 
 # Change keyboard layout (tr, us, de)
 bindsym $mod+shift+u exec setxkbmap us && notify-send -u low "Keyboard layout: US"

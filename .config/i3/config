@@ -214,7 +214,6 @@ bindsym $mod+Shift+r restart
 
 # Resize window (you can also use the mouse for that)
 bindsym $mod+r mode "resize"
-bindsym $mod+Shift+m resize set 1070 px 730 px
 mode "resize" {
         # These bindings trigger as soon as you enter the resize mode
 

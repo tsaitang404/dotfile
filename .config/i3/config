@@ -99,7 +99,10 @@ bindsym $mod+shift+l exec ~/.config/i3/scripts/lock.sh
 bindsym $mod+Shift+q kill
 
 # Start the dmenu
-bindsym $mod+d exec dmenu_run -nb '#16161d' -nf '#6a9589' -sb '#c8c093' -sf '#21222c' -fn 'pango:monospace:pixelsize=14'
+# bindsym $mod+d exec dmenu_run -nb '#16161d' -nf '#6a9589' -sb '#c8c093' -sf '#21222c' -fn 'pango:monospace:pixelsize=14'
+# rofi replace dmenu
+bindsym $mod+d exec --no-startup-id rofi -show combi
+
 
 # Change focus
 bindsym $mod+j focus left

@@ -70,7 +70,10 @@ for_window [title="Bitwarden"] floating enable
 for_window [class="spectacle"] floating enable
 
 #4 =============     行   为    ==============
-
+# 聚焦活动窗口
+focus_on_window_activation focus
+# 挂起
+bindsym $mod+Shift+u exec systemctl suspend
 # 打开Dolphin
 bindsym $mod+e exec dolphin
 
@@ -79,7 +82,7 @@ bindsym $mod+Shift+m exec spectacle
 bindsym Print	exec spectacle
 
 # Change keyboard layout (tr, us, de)
-bindsym $mod+shift+u exec setxkbmap us && notify-send -u low "Keyboard layout: US"
+#bindsym $mod+shift+u exec setxkbmap us && notify-send -u low "Keyboard layout: US"
 
 # Systemctl calls
 bindsym $mod+shift+s exec systemctl suspend

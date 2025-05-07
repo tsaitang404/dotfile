@@ -147,7 +147,7 @@ bindsym $mod+a focus parent
 floating_modifier $mod
 
 # Switch to workspace
-bindsym $mod+grave workspace $ws0
+bindsym $mod+Escape workspace $ws0
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
 bindsym $mod+3 workspace $ws3

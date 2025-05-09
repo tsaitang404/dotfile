@@ -84,8 +84,14 @@ bindsym Ctrl+Shift+Escape exec plasma-systemmonitor
 =======
 bindsym $mod+e exec rofi -show filebrowser
 # 打开音量控制
+<<<<<<< HEAD
 bindsym $mod+shift+a exec pavucontrol
 >>>>>>> a9859fa (add audio ctrl hotkey)
+=======
+# bindsym $mod+shift+a exec pavucontrol
+bindsym $mod+shift+a exec kcmshell6 kcm_pulseaudio  
+
+>>>>>>> 1451fcc (kde audio ctrl replace pavucontrol)
 # 截图
 bindsym $mod+Shift+m exec spectacle
 bindsym Print	exec spectacle

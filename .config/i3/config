@@ -14,8 +14,8 @@
 
 #1 =============   基 本 设 定	==============
 
-# Super key2 
-set $mod Mod4
+# Super key2 Mod1=Alt Mod2=win
+set $mod Mod1
 # Full screen settings
 # for_window [class="FL64"] fullscreen enable
 popup_during_fullscreen smart
@@ -76,6 +76,8 @@ focus_on_window_activation focus
 bindsym $mod+Shift+u exec systemctl suspend
 # 打开Dolphin
 bindsym $mod+e exec dolphin
+# 打开Plasma监视器
+bindsym $mod+Esc exec plasma-systemmonitor
 
 # 截图
 bindsym $mod+Shift+m exec spectacle
@@ -278,7 +280,4 @@ exec --no-startup-id picom -b
 # fcitx5 输入法
 exec --no-startup-id fcitx5 & 
 #7 =============     杂   项    ==============
-# 同步第二屏幕输出
-exec_always xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^DP[0-9,-]*'}  --auto --same-as ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} 2>&1 > /dev/null
-
 

@@ -6,6 +6,7 @@
 !.bashrc
 !.vimrc
 !.p10k.zsh
+!.config/i3/*
 
 
 # 不忽略.config下的文件

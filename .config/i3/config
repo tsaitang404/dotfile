@@ -249,7 +249,8 @@ mode "resize" {
 #5 =============     组	  件    ==============
 
 # 背景
-exec_always --no-startup-id feh --bg-fill ~/.config/i3/i3-binding.png
+# exec_always --no-startup-id feh --bg-fill ~/.config/i3/i3-binding.png
+exec_always --no-startip-id bash ~/.config/i3/scripts/loop_pngs.sh ~/.config/i3/background 
 # 启动下拉终端
 exec --no-startup-id tilda
 # Start i3bar to display a workspace bar (plus the system information i3status

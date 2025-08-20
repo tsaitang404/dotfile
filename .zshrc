@@ -85,3 +85,19 @@ bindkey '^[[4~' end-of-line
 
 # dotfiles管理别名
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/sa/.dart-cli-completion/zsh-config.zsh ]] && . /home/sa/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+<<<<<<< HEAD
+
+# dotfiles管理别名
+alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+=======
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/sa/.dart-cli-completion/zsh-config.zsh ]] && . /home/sa/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+
+>>>>>>> e3b543c (更新 zshrc 增加 Dart 补全配置，完善 .gitignore 管理 dotfile)

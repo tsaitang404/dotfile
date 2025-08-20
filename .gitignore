@@ -5,6 +5,7 @@
 !.gitignore
 !.zshrc
 !.bashrc
+!.bash_profile
 !.vimrc
 !.p10k.zsh
 !.gitconfig
@@ -22,11 +23,15 @@
 !.config/zsh/themes/
 !.config/picom/
 !.config/htop/
+!.config/fontconfig/
+!.config/xsettingsd/
 
 # 不忽略指定目录下的所有内容
 !.config/i3/**
 !.config/picom/**
 !.config/htop/**
+!.config/fontconfig/**
+!.config/xsettingsd/**
 
 # 保留zsh配置（用户需要同步）
 !.config/zsh/themes/**

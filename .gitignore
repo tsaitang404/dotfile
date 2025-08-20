@@ -24,8 +24,7 @@
 !.config/htop/
 
 # 不忽略指定目录下的所有内容
-!.config/i3/config
-!.config/i3/scripts/**
+!.config/i3/**
 !.config/picom/**
 !.config/htop/**
 
@@ -33,9 +32,6 @@
 !.config/zsh/themes/**
 !.config/zsh/plugins/**
 !.config/zsh/zsh-autosuggestions/**
-
-# 忽略i3背景图片文件夹（太大且可单独管理）
-.config/i3/background/**
 
 # 在被跟踪的目录中忽略特定文件
 .config/**/cache

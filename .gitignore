@@ -13,6 +13,7 @@
 !README.md
 !install.sh
 !manage.sh
+!cleanup.sh
 
 # 不忽略的目录结构
 !.config/
@@ -23,10 +24,18 @@
 !.config/htop/
 
 # 不忽略指定目录下的所有内容
-!.config/i3/**
-!.config/zsh/themes/**
+!.config/i3/config
+!.config/i3/scripts/**
 !.config/picom/**
 !.config/htop/**
+
+# 保留zsh配置（用户需要同步）
+!.config/zsh/themes/**
+!.config/zsh/plugins/**
+!.config/zsh/zsh-autosuggestions/**
+
+# 忽略i3背景图片文件夹（太大且可单独管理）
+.config/i3/background/**
 
 # 在被跟踪的目录中忽略特定文件
 .config/**/cache
@@ -41,6 +50,9 @@
 !.xinitrc
 !.npmrc
 !.ideavimrc
+!.gtkrc-2.0
+!.fehbg
+!.xprofile
 
 # 忽略可能包含敏感信息的文件
 

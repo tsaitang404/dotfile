@@ -67,3 +67,33 @@ fi
 echo -e "${GREEN}完成! dotfiles已安装.${NC}"
 echo -e "${YELLOW}您可以使用 'dotfiles' 命令来管理您的dotfiles.${NC}"
 echo -e "${YELLOW}如果您刚刚更新了shell配置文件，请重新加载它或重启终端以应用更改.${NC}"
+echo ""
+echo -e "${BLUE}=== 依赖检查 ===${NC}"
+
+# 检查Zsh插件
+echo -e "${GREEN}检查Zsh插件...${NC}"
+if [ ! -d "$HOME/.config/zsh/plugins/zsh-autosuggestions" ]; then
+    echo -e "${YELLOW}zsh-autosuggestions 插件缺失，正在安装...${NC}"
+    mkdir -p "$HOME/.config/zsh/plugins"
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.config/zsh/plugins/zsh-autosuggestions"
+fi
+
+if [ ! -d "$HOME/.config/zsh/plugins/zsh-syntax-highlighting" ]; then
+    echo -e "${YELLOW}zsh-syntax-highlighting 插件缺失，正在安装...${NC}"
+    mkdir -p "$HOME/.config/zsh/plugins"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.config/zsh/plugins/zsh-syntax-highlighting"
+fi
+
+# 检查Powerlevel10k主题
+if [ ! -d "$HOME/.config/zsh/themes/powerlevel10k" ]; then
+    echo -e "${YELLOW}Powerlevel10k 主题缺失，正在安装...${NC}"
+    mkdir -p "$HOME/.config/zsh/themes"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.config/zsh/themes/powerlevel10k"
+fi
+
+echo -e "${GREEN}依赖检查完成!${NC}"
+echo ""
+echo -e "${BLUE}提示:${NC}"
+echo -e "${YELLOW}- 如果Powerlevel10k主题显示异常，请运行: p10k configure${NC}"
+echo -e "${YELLOW}- 确保安装了 Nerd Font 字体以获得最佳显示效果${NC}"
+echo -e "${YELLOW}- 如果需要重新配置主题，运行: p10k configure${NC}"

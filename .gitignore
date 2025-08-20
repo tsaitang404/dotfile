@@ -2,16 +2,40 @@
 *
 
 # 不忽略的dot文件
+!.gitignore
 !.zshrc
 !.bashrc
 !.vimrc
 !.p10k.zsh
-!.config/i3/*
 
+# 不忽略的目录结构
+!.config/
+!.config/i3/
+!.config/zsh/
+!.config/zsh/themes/
+!.config/picom/
+!.config/htop/
 
-# 不忽略.config下的文件
+# 不忽略指定目录下的所有内容
 !.config/i3/**
 !.config/zsh/themes/**
 !.config/picom/**
+!.config/htop/**
+
+# 在被跟踪的目录中忽略特定文件
+.config/**/cache
+.config/**/tmp
+.config/**/*.log
+
+# 其他常用配置文件
+!.tmux.conf
+!.Xresources
+!.xinitrc
+!.npmrc
+!.ideavimrc
+
+# 忽略可能包含敏感信息的文件
+
+# 忽略特定机器的配置文件
 
 

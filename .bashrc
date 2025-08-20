@@ -55,11 +55,5 @@ function clean() {
     echo "临时文件已清理"
 }
 
-# 自动启动SSH代理并添加密钥
-if [ -z "$SSH_AUTH_SOCK" ]; then
-    eval "$(ssh-agent -s)" > /dev/null
-    ssh-add ~/.ssh/TT 2>/dev/null
-fi
-
 # dotfiles管理别名
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"

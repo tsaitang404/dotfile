@@ -7,10 +7,12 @@
 !.bashrc
 !.vimrc
 !.p10k.zsh
+!.gitconfig
 
 # 不忽略根目录下的文档和脚本
 !README.md
 !install.sh
+!manage.sh
 
 # 不忽略的目录结构
 !.config/

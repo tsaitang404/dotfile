@@ -8,6 +8,10 @@
 !.vimrc
 !.p10k.zsh
 
+# 不忽略根目录下的文档和脚本
+!README.md
+!install.sh
+
 # 不忽略的目录结构
 !.config/
 !.config/i3/

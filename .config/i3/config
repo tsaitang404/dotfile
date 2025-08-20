@@ -14,7 +14,7 @@
 
 #1 =============   基 本 设 定	==============
 
-# Super key2 Mod1=Alt Mod2=win
+# Super key2 Mod1=Alt Mod4=win
 set $mod Mod1
 # Full screen settings
 # for_window [class="FL64"] fullscreen enable
@@ -77,7 +77,7 @@ bindsym $mod+Shift+u exec systemctl suspend
 # 打开Dolphin
 bindsym $mod+e exec dolphin
 # 打开Plasma监视器
-bindsym $mod+Esc exec plasma-systemmonitor
+bindsym Ctrl+Shift+Escape exec plasma-systemmonitor
 
 # 截图
 bindsym $mod+Shift+m exec spectacle
@@ -250,7 +250,8 @@ mode "resize" {
 
 # 背景
 # exec_always --no-startup-id feh --bg-fill ~/.config/i3/i3-binding.png
-exec_always --no-startip-id bash ~/.config/i3/scripts/loop_pngs.sh ~/.config/i3/background 
+exec bash ~/.config/i3/scripts/loop_pngs.sh ~/.config/i3/background/
+
 # 启动下拉终端
 exec --no-startup-id tilda
 # Start i3bar to display a workspace bar (plus the system information i3status
@@ -275,10 +276,14 @@ bar {
 
 #6 =============     服   务    ==============
 # 启动网络配置
-exec_always --no-startup-id nm-applet &
+#exec_always --no-startup-id nm-applet &
 # 启动合成器
 exec --no-startup-id picom -b 
 # fcitx5 输入法
 exec --no-startup-id fcitx5 & 
+# 启动钥匙环
+#exec --no-startup-id /usr/lib/pam_kwallet_init &
+#exec --no-startup-id /usr/lib/polkit-kde-authentication-agent-1 &
+
 #7 =============     杂   项    ==============
 

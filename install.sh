@@ -33,20 +33,20 @@ else
 fi
 
 # 创建alias
-alias dotfiles="/usr/bin/git --git-dir=$DOTFILES_DIR --work-tree=$HOME"
+
 
 # 备份现有文件
 echo -e "${GREEN}备份可能会被覆盖的文件...${NC}"
 mkdir -p "$BACKUP_DIR"
-dotfiles checkout 2>&1 | grep -E "\s+\." | awk '{print $1}' | xargs -I{} mv {} "$BACKUP_DIR/{}" 2>/dev/null || true
+/usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout 2>&1 | grep -E "\s+\." | awk '{print $1}' | xargs -I{} mv {} "$BACKUP_DIR/{}" 2>/dev/null || true
 
 # 检出文件
 echo -e "${GREEN}检出dotfiles...${NC}"
-dotfiles checkout
+/usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" checkout
 
 # 隐藏未跟踪的文件
 echo -e "${GREEN}配置git不显示未跟踪的文件...${NC}"
-dotfiles config --local status.showUntrackedFiles no
+/usr/bin/git --git-dir="$DOTFILES_DIR" --work-tree="$HOME" config --local status.showUntrackedFiles no
 
 # 添加alias到shell配置文件
 if [ -f "$HOME/.bashrc" ]; then

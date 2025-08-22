@@ -48,6 +48,9 @@
 .config/**/*.zwc
 .config/**/*.zwc.old
 
+# 忽略 htop 临时文件
+.config/htop/htoprc.tmp*
+
 # 其他常用配置文件
 !.tmux.conf
 !.Xresources

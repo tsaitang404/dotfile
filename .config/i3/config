@@ -68,17 +68,30 @@ set $ws10 "💀"
 for_window [title="Bitwarden"] floating enable
 # spectacle      
 for_window [class="spectacle"] floating enable
-
+# pavucontrol plauseaudio setting 
+for_window [class="pavucontrol"] floating enable
 #4 =============     行   为    ==============
 # 聚焦活动窗口
 focus_on_window_activation focus
 # 挂起
 bindsym $mod+Shift+u exec systemctl suspend
 # 打开Dolphin
+<<<<<<< HEAD
 bindsym $mod+e exec dolphin
 # 打开Plasma监视器
 bindsym Ctrl+Shift+Escape exec plasma-systemmonitor
 
+=======
+bindsym $mod+e exec rofi -show filebrowser
+# 打开音量控制
+<<<<<<< HEAD
+bindsym $mod+shift+a exec pavucontrol
+>>>>>>> a9859fa (add audio ctrl hotkey)
+=======
+# bindsym $mod+shift+a exec pavucontrol
+bindsym $mod+shift+a exec kcmshell6 kcm_pulseaudio  
+
+>>>>>>> 1451fcc (kde audio ctrl replace pavucontrol)
 # 截图
 bindsym $mod+Shift+m exec spectacle
 bindsym Print	exec spectacle
@@ -198,10 +211,12 @@ workspace_auto_back_and_forth yes
 # 开主屏
 bindsym $mod+Home xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} --auto
 # 关主屏
-bindsym $mod+End xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|grep -o '^eDP[0-9,-]*'} --off
-# Screen brightness controls
-bindsym XF86MonBrightnessUp exec light -A 10
+
+# 打开文件管理器（远程为主 rofi，可选 dolphin）
 bindsym XF86MonBrightnessDown exec light -U 10
+# 打开音量控制
+bindsym $mod+shift+a exec pavucontrol
+# 打开Plasma监视器（如需保留）
 # pulseaudio 音频设置
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%

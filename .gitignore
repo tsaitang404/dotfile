@@ -16,6 +16,9 @@
 !manage.sh
 !cleanup.sh
 
+# 不忽略ssh主机配置
+!.ssh/config
+
 # 不忽略的目录结构
 !.config/
 !.config/i3/

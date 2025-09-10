@@ -12,7 +12,8 @@ NC='\033[0m' # No Color
 
 # 设置dotfiles命令函数
 dotfiles() {
-    /usr/bin/git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" "$@"
+    # 直接在 $HOME 目录下作为普通仓库操作
+    /usr/bin/git -C "$HOME" "$@"
 }
 
 show_help() {

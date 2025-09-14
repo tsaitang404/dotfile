@@ -55,5 +55,4 @@ function clean() {
     echo "临时文件已清理"
 }
 
-# dotfiles管理别名
-alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+

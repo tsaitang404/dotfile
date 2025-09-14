@@ -12,8 +12,8 @@ NC='\033[0m' # No Color
 
 # 设置dotfiles命令函数
 dotfiles() {
-    # 直接在 $HOME 目录下作为普通仓库操作
-    /usr/bin/git -C "$HOME" "$@"
+    # 在 .dotfiles 目录下作为普通仓库操作
+    /usr/bin/git -C "$HOME/.dotfiles" "$@"
 }
 
 show_help() {
@@ -36,6 +36,8 @@ show_help() {
     echo "  $0 add .bashrc"
     echo "  $0 commit \"更新bash配置\""
     echo "  $0 sync"
+    echo ""
+    echo "注意: 此脚本需要在 $HOME/.dotfiles 目录下运行"
 }
 
 ensure_ssh_agent() {
@@ -58,9 +60,31 @@ dotfiles_add() {
         exit 1
     fi
     
-    echo -e "${GREEN}添加文件: $1${NC}"
+    # 检查文件是否存在于HOME目录
+    if [ ! -f "$HOME/$1" ] && [ ! -d "$HOME/$1" ]; then
+        echo -e "${RED}错误: 文件 $HOME/$1 不存在${NC}"
+        exit 1
+    fi
+    
+    # 复制文件到dotfiles目录
+    echo -e "${GREEN}复制文件到dotfiles仓库: $1${NC}"
+    if [ -f "$HOME/$1" ]; then
+        mkdir -p "$(dirname "$HOME/.dotfiles/$1")"
+        cp "$HOME/$1" "$HOME/.dotfiles/$1"
+    elif [ -d "$HOME/$1" ]; then
+        mkdir -p "$(dirname "$HOME/.dotfiles/$1")"
+        cp -r "$HOME/$1" "$HOME/.dotfiles/$1"
+    fi
+    
+    # 添加到git
     dotfiles add "$1"
-    echo -e "${GREEN}文件已添加到暂存区${NC}"
+    
+    # 创建符号链接
+    echo -e "${GREEN}创建符号链接: $1${NC}"
+    rm -rf "$HOME/$1"
+    ln -sf "$HOME/.dotfiles/$1" "$HOME/$1"
+    
+    echo -e "${GREEN}文件已添加到dotfiles仓库并创建符号链接${NC}"
 }
 
 dotfiles_commit() {
@@ -77,22 +101,34 @@ dotfiles_commit() {
 dotfiles_push() {
     ensure_ssh_agent
     echo -e "${GREEN}推送到远程仓库...${NC}"
-    dotfiles push origin master
+    dotfiles push origin main
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}推送成功!${NC}"
     else
-        echo -e "${RED}推送失败，请检查网络连接和SSH密钥${NC}"
+        echo -e "${YELLOW}尝试推送到master分支...${NC}"
+        dotfiles push origin master
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}推送成功!${NC}"
+        else
+            echo -e "${RED}推送失败，请检查网络连接和SSH密钥${NC}"
+        fi
     fi
 }
 
 dotfiles_pull() {
     ensure_ssh_agent
     echo -e "${GREEN}从远程仓库拉取...${NC}"
-    dotfiles pull origin master
+    dotfiles pull origin main
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}拉取成功!${NC}"
     else
-        echo -e "${RED}拉取失败，请检查网络连接和SSH密钥${NC}"
+        echo -e "${YELLOW}尝试从master分支拉取...${NC}"
+        dotfiles pull origin master
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}拉取成功!${NC}"
+        else
+            echo -e "${RED}拉取失败，请检查网络连接和SSH密钥${NC}"
+        fi
     fi
 }
 

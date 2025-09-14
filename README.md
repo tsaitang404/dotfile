@@ -1,61 +1,73 @@
 # Dotfiles
 
-这是我的个人dotfiles仓库，使用bare repository管理方式。
+这是我的个人dotfiles仓库，使用符号链接管理方式。
 
 ## 安装
 
 ### 克隆仓库
 
 ```bash
-git clone --bare git@github.com:tsaitang404/dotfile.git $HOME/.dotfiles
+git clone git@github.com:tsaitang404/dotfile.git $HOME/.dotfiles
 ```
 
-### 设置alias
+### 运行安装脚本
 
 ```bash
-alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+cd $HOME/.dotfiles
+./install.sh
 ```
 
-### 检出文件
-
-```bash
-dotfiles checkout
-```
-
-如果checkout失败，请先备份冲突的文件：
-
-```bash
-mkdir -p .dotfiles-backup && \
-dotfiles checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
-xargs -I{} mv {} .dotfiles-backup/{}
-```
-
-### 隐藏未跟踪的文件
-
-```bash
-dotfiles config --local status.showUntrackedFiles no
-```
+安装脚本会自动：
+- 备份现有的配置文件
+- 创建符号链接到仓库中的文件
+- 安装必要的依赖（Zsh插件等）
 
 ## 使用方法
 
 ### 添加新文件
 
 ```bash
-dotfiles add .zshrc
-dotfiles commit -m "Add .zshrc"
-dotfiles push
+cd $HOME/.dotfiles
+git add .zshrc
+git commit -m "Add .zshrc"
+git push
+```
+
+或者使用管理脚本：
+
+```bash
+cd $HOME/.dotfiles
+./manage.sh add .zshrc
+./manage.sh commit "Add .zshrc"
+./manage.sh push
 ```
 
 ### 查看状态
 
 ```bash
-dotfiles status
+cd $HOME/.dotfiles
+git status
+```
+
+或者：
+
+```bash
+cd $HOME/.dotfiles
+./manage.sh status
 ```
 
 ### 更新文件
 
 ```bash
-dotfiles pull
+cd $HOME/.dotfiles
+git pull
+```
+
+或者：
+
+```bash
+cd $HOME/.dotfiles
+./manage.sh pull
 ```
 
 ## 跟踪的文件
@@ -127,8 +139,8 @@ dotfiles pull
 该仓库已配置了以下自动化功能：
 
 1. **SSH代理自动启动**: 在.bashrc和.zshrc中配置了SSH代理自动启动
-2. **dotfiles别名**: 自动设置dotfiles命令别名
-3. **智能忽略**: 使用否定模式的.gitignore，只跟踪指定文件
+2. **符号链接管理**: 安装脚本自动创建符号链接
+3. **智能备份**: 安装前自动备份现有配置文件
 
 ## 依赖安装
 
@@ -172,6 +184,8 @@ sudo apt install i3 picom htop vim git
 # Fedora
 sudo dnf install i3 picom htop vim git
 ```
+
+
 
 ## 故障排除
 

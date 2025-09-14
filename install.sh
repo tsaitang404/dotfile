@@ -33,7 +33,7 @@ else
 fi
 
 # 进入dotfiles目录
-cd "$DOTFILES_DIR"
+cd "$DOTFILES_DIR" || exit
 
 # 定义需要链接的文件列表
 dotfiles=(

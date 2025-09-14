@@ -81,7 +81,7 @@ dotfiles_add() {
     
     # 创建符号链接
     echo -e "${GREEN}创建符号链接: $1${NC}"
-    rm -rf "$HOME/$1"
+    rm -rf "${HOME:?}/$1"
     ln -sf "$HOME/.dotfiles/$1" "$HOME/$1"
     
     echo -e "${GREEN}文件已添加到dotfiles仓库并创建符号链接${NC}"
@@ -101,13 +101,11 @@ dotfiles_commit() {
 dotfiles_push() {
     ensure_ssh_agent
     echo -e "${GREEN}推送到远程仓库...${NC}"
-    dotfiles push origin main
-    if [ $? -eq 0 ]; then
+    if dotfiles push origin main; then
         echo -e "${GREEN}推送成功!${NC}"
     else
         echo -e "${YELLOW}尝试推送到master分支...${NC}"
-        dotfiles push origin master
-        if [ $? -eq 0 ]; then
+        if dotfiles push origin master; then
             echo -e "${GREEN}推送成功!${NC}"
         else
             echo -e "${RED}推送失败，请检查网络连接和SSH密钥${NC}"
@@ -118,13 +116,11 @@ dotfiles_push() {
 dotfiles_pull() {
     ensure_ssh_agent
     echo -e "${GREEN}从远程仓库拉取...${NC}"
-    dotfiles pull origin main
-    if [ $? -eq 0 ]; then
+    if dotfiles pull origin main; then
         echo -e "${GREEN}拉取成功!${NC}"
     else
         echo -e "${YELLOW}尝试从master分支拉取...${NC}"
-        dotfiles pull origin master
-        if [ $? -eq 0 ]; then
+        if dotfiles pull origin master; then
             echo -e "${GREEN}拉取成功!${NC}"
         else
             echo -e "${RED}拉取失败，请检查网络连接和SSH密钥${NC}"

@@ -185,6 +185,10 @@ sudo apt install i3 picom htop vim git
 sudo dnf install i3 picom htop vim git
 ```
 
+## 从 Bare Repository 迁移
+
+如果您之前使用的是 bare repository 方式，请查看 [迁移指南](MIGRATION.md) 了解如何迁移到新的符号链接方式。
+
 ## 故障排除
 
 ### 常见问题

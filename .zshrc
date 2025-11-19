@@ -90,3 +90,15 @@ alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 ## Completion scripts setup. Remove the following line to uninstall
 [[ -f /home/sa/.dart-cli-completion/zsh-config.zsh ]] && . /home/sa/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
+
+
+## nodejs multi version manage
+source /usr/share/nvm/init-nvm.sh
+## pyenv plugins init
+# Add these to ~/.zshrc if they are not present
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+# virtualenv init
+eval "$(pyenv virtualenv-init -)"

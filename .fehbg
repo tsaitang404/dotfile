@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --no-fehbg --bg-fill '/home/sa/.config/i3/i3-binding.png' 
+feh --no-fehbg --bg-center '/home/sa/.config/i3/background//bg044.png' 

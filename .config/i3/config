@@ -6,6 +6,8 @@
 # 2. 外观
 # 	2.1 边框
 #	2.2 圆角
+#   2.3 颜色
+#   2.5 Plasma
 # 3. 布局
 # 4. 行为
 # 5. 组件
@@ -47,6 +49,7 @@ client.unfocused        #16161d #16161d #3E3E38 #6a9589 #3E3E38
 client.focused_inactive #16161d #16161d #3E3E38 #6a9589 #3E3E38
 client.focused          #16161d #16161d #c8c093 #c8c093 #c8c093
 # client.focused        #16161d #16161d #3E3E38 #6a9589 #3E3E38
+#2.4 ===========     Plasma    ==============
 #3 =============     布   局    ==============
 #3.1 ===========     工 作 区	==============
 # Define names for default workspaces for which we configure key bindings later on.
@@ -76,22 +79,14 @@ focus_on_window_activation focus
 # 挂起
 bindsym $mod+Shift+u exec systemctl suspend
 # 打开Dolphin
-<<<<<<< HEAD
 bindsym $mod+e exec dolphin
 # 打开Plasma监视器
 bindsym Ctrl+Shift+Escape exec plasma-systemmonitor
 
-=======
-bindsym $mod+e exec rofi -show filebrowser
 # 打开音量控制
-<<<<<<< HEAD
-bindsym $mod+shift+a exec pavucontrol
->>>>>>> a9859fa (add audio ctrl hotkey)
-=======
 # bindsym $mod+shift+a exec pavucontrol
 bindsym $mod+shift+a exec kcmshell6 kcm_pulseaudio  
 
->>>>>>> 1451fcc (kde audio ctrl replace pavucontrol)
 # 截图
 bindsym $mod+Shift+m exec spectacle
 bindsym Print	exec spectacle
@@ -215,7 +210,7 @@ bindsym $mod+Home xrandr --output ${xrandr |grep \ connected|awk '{print $1}'|gr
 # 打开文件管理器（远程为主 rofi，可选 dolphin）
 bindsym XF86MonBrightnessDown exec light -U 10
 # 打开音量控制
-bindsym $mod+shift+a exec pavucontrol
+# bindsym $mod+shift+a exec pavucontrol
 # 打开Plasma监视器（如需保留）
 # pulseaudio 音频设置
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%

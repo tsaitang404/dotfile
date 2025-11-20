@@ -39,9 +39,13 @@ ensure_ssh_agent() {
 
 dotfiles_add() {
     [ -z "$1" ] && { echo -e "${RED}请指定文件${NC}" >&2; exit 1; }
-    [ ! -e "$HOME/$1" ] && { echo -e "${RED}文件不存在: $1${NC}" >&2; exit 1; }
+    # 修复：路径应该支持相对和绝对路径
+    local file="$1"
+    [[ "$file" != /* ]] && file="$HOME/$file"
+    [ ! -e "$file" ] && { echo -e "${RED}文件不存在: $1${NC}" >&2; exit 1; }
     echo -e "${GREEN}添加: $1${NC}"
-    dotfiles add "$1"
+    # 修复：应该添加相对于 HOME 的路径
+    dotfiles add "${1#$HOME/}"
 }
 
 dotfiles_push() {
@@ -62,7 +66,9 @@ dotfiles_push() {
     
     # 测试连接
     if [[ "$REMOTE_URL" =~ ^git@([^:]+): ]]; then
-        ssh-keyscan -H "${BASH_REMATCH[1]}" >> ~/.ssh/known_hosts 2>/dev/null
+        local host="${BASH_REMATCH[1]}"
+        grep -q "^[^#].*$host" ~/.ssh/known_hosts 2>/dev/null || \
+            ssh-keyscan -H "$host" >> ~/.ssh/known_hosts 2>/dev/null
     fi
     
     local BRANCH=$(dotfiles symbolic-ref --short HEAD 2>/dev/null || echo "master")
@@ -115,7 +121,18 @@ dotfiles_pull() {
 }
 
 dotfiles_sync() {
-    dotfiles diff --quiet && dotfiles diff --cached --quiet && { echo -e "${YELLOW}无更改${NC}"; return; }
+    # 修复：应该检查是否有未跟踪的文件
+    if dotfiles diff --quiet && dotfiles diff --cached --quiet; then
+        # 检查是否有未跟踪文件
+        local untracked=$(dotfiles ls-files --others --exclude-standard)
+        if [ -n "$untracked" ]; then
+            echo -e "${YELLOW}存在未跟踪文件：${NC}"
+            echo "$untracked" | sed 's/^/  /'
+        else
+            echo -e "${YELLOW}无更改${NC}"
+        fi
+        return
+    fi
     dotfiles status
     read -p "提交并推送? (y/N): " -n 1 -r
     echo
@@ -134,7 +151,8 @@ case "${1:-help}" in
     pull) dotfiles_pull ;;
     sync) dotfiles_sync ;;
     backup)
-        local dir="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
+        # 修复：backup 中 local 在子 shell case 中无效
+        dir="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
         mkdir -p "$dir"
         dotfiles ls-files | while read -r f; do
             [ -f "$HOME/$f" ] && { mkdir -p "$dir/$(dirname "$f")"; cp "$HOME/$f" "$dir/$f"; }

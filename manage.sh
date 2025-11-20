@@ -61,9 +61,37 @@ dotfiles_status() {
 }
 
 dotfiles_add() {
-    [ -z "$1" ] && { echo -e "${RED}错误: 请指定文件${NC}" >&2; exit 1; }
-    echo -e "${GREEN}添加: $1${NC}"
+    if [ -z "$1" ]; then
+        echo -e "${RED}错误: 请指定要添加的文件${NC}"
+        echo "使用方法: $0 add <文件名>"
+        exit 1
+    fi
+    
+    # 检查文件是否存在于HOME目录
+    if [ ! -f "$HOME/$1" ] && [ ! -d "$HOME/$1" ]; then
+        echo -e "${RED}错误: 文件 $HOME/$1 不存在${NC}"
+        exit 1
+    fi
+    
+    # 复制文件到dotfiles目录
+    echo -e "${GREEN}复制文件到dotfiles仓库: $1${NC}"
+    if [ -f "$HOME/$1" ]; then
+        mkdir -p "$(dirname "$HOME/.dotfiles/$1")"
+        cp "$HOME/$1" "$HOME/.dotfiles/$1"
+    elif [ -d "$HOME/$1" ]; then
+        mkdir -p "$(dirname "$HOME/.dotfiles/$1")"
+        cp -r "$HOME/$1" "$HOME/.dotfiles/$1"
+    fi
+    
+    # 添加到git
     dotfiles add "$1"
+    
+    # 创建符号链接
+    echo -e "${GREEN}创建符号链接: $1${NC}"
+    rm -rf "${HOME:?}/$1"
+    ln -sf "$HOME/.dotfiles/$1" "$HOME/$1"
+    
+    echo -e "${GREEN}文件已添加到dotfiles仓库并创建符号链接${NC}"
 }
 
 dotfiles_commit() {
@@ -165,9 +193,18 @@ dotfiles_push() {
 }
 
 dotfiles_pull() {
-    ensure_ssh_agent || return 1
-    echo -e "${GREEN}拉取更新...${NC}"
-    dotfiles pull && echo -e "${GREEN}拉取成功${NC}" || echo -e "${RED}拉取失败${NC}"
+    ensure_ssh_agent
+    echo -e "${GREEN}从远程仓库拉取...${NC}"
+    if dotfiles pull origin main; then
+        echo -e "${GREEN}拉取成功!${NC}"
+    else
+        echo -e "${YELLOW}尝试从master分支拉取...${NC}"
+        if dotfiles pull origin master; then
+            echo -e "${GREEN}拉取成功!${NC}"
+        else
+            echo -e "${RED}拉取失败，请检查网络连接和SSH密钥${NC}"
+        fi
+    fi
 }
 
 dotfiles_sync() {

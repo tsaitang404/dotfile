@@ -8,8 +8,27 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# 修复：应该操作 ~/.dotfiles 目录，而非 HOME
+DOTFILES_DIR="$HOME/.dotfiles"
+
+# 检查并初始化仓库
+check_repo() {
+    if [ ! -d "$DOTFILES_DIR" ]; then
+        echo -e "${RED}错误: $DOTFILES_DIR 不存在${NC}" >&2
+        echo -e "${YELLOW}请先运行安装脚本${NC}" >&2
+        exit 1
+    fi
+    
+    if [ ! -d "$DOTFILES_DIR/.git" ]; then
+        echo -e "${RED}错误: $DOTFILES_DIR 不是 Git 仓库${NC}" >&2
+        echo -e "${YELLOW}请先运行安装脚本或手动克隆仓库${NC}" >&2
+        exit 1
+    fi
+}
+
 dotfiles() {
-    /usr/bin/git -C "$HOME" "$@"
+    check_repo
+    /usr/bin/git -C "$DOTFILES_DIR" "$@"
 }
 
 show_help() {
@@ -39,13 +58,28 @@ ensure_ssh_agent() {
 
 dotfiles_add() {
     [ -z "$1" ] && { echo -e "${RED}请指定文件${NC}" >&2; exit 1; }
-    # 修复：路径应该支持相对和绝对路径
     local file="$1"
-    [[ "$file" != /* ]] && file="$HOME/$file"
-    [ ! -e "$file" ] && { echo -e "${RED}文件不存在: $1${NC}" >&2; exit 1; }
-    echo -e "${GREEN}添加: $1${NC}"
-    # 修复：应该添加相对于 HOME 的路径
-    dotfiles add "${1#$HOME/}"
+    
+    # 修复：检查文件存在性（在 HOME 或 .dotfiles 中）
+    if [ -e "$HOME/$file" ]; then
+        # 文件在 HOME 中，需要复制到 .dotfiles
+        echo -e "${GREEN}复制到仓库: $file${NC}"
+        mkdir -p "$DOTFILES_DIR/$(dirname "$file")"
+        cp -a "$HOME/$file" "$DOTFILES_DIR/$file"
+        
+        # 创建符号链接
+        rm -f "$HOME/$file"
+        ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
+    elif [ -e "$DOTFILES_DIR/$file" ]; then
+        # 文件已在 .dotfiles 中
+        echo -e "${YELLOW}文件已在仓库中: $file${NC}"
+    else
+        echo -e "${RED}文件不存在: $file${NC}" >&2
+        exit 1
+    fi
+    
+    echo -e "${GREEN}添加到 Git: $file${NC}"
+    dotfiles add "$file"
 }
 
 dotfiles_push() {
@@ -78,9 +112,10 @@ dotfiles_push() {
     
     local PUSH_OUTPUT
     if [ -z "$UPSTREAM" ]; then
-        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$HOME" push -u origin "$BRANCH" 2>&1)
+        # 修复：使用 -C "$DOTFILES_DIR" 而非 "$HOME"
+        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$DOTFILES_DIR" push -u origin "$BRANCH" 2>&1)
     else
-        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$HOME" push 2>&1)
+        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$DOTFILES_DIR" push 2>&1)
     fi
     
     local CODE=$?
@@ -93,7 +128,7 @@ dotfiles_push() {
         echo -e "${RED}本地落后于远程${NC}"
         read -p "立即拉取并重试? (y/N): " -n 1 -r
         echo
-        [[ $REPLY =~ ^[Yy]$ ]] && dotfiles pull origin "$BRANCH" && /usr/bin/git -C "$HOME" push
+        [[ $REPLY =~ ^[Yy]$ ]] && dotfiles pull origin "$BRANCH" && /usr/bin/git -C "$DOTFILES_DIR" push
     else
         echo "$PUSH_OUTPUT"
         echo -e "${RED}推送失败${NC}"
@@ -121,9 +156,7 @@ dotfiles_pull() {
 }
 
 dotfiles_sync() {
-    # 修复：应该检查是否有未跟踪的文件
     if dotfiles diff --quiet && dotfiles diff --cached --quiet; then
-        # 检查是否有未跟踪文件
         local untracked=$(dotfiles ls-files --others --exclude-standard)
         if [ -n "$untracked" ]; then
             echo -e "${YELLOW}存在未跟踪文件：${NC}"
@@ -151,11 +184,11 @@ case "${1:-help}" in
     pull) dotfiles_pull ;;
     sync) dotfiles_sync ;;
     backup)
-        # 修复：backup 中 local 在子 shell case 中无效
         dir="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
         mkdir -p "$dir"
+        # 修复：从 .dotfiles 目录读取文件列表
         dotfiles ls-files | while read -r f; do
-            [ -f "$HOME/$f" ] && { mkdir -p "$dir/$(dirname "$f")"; cp "$HOME/$f" "$dir/$f"; }
+            [ -f "$DOTFILES_DIR/$f" ] && { mkdir -p "$dir/$(dirname "$f")"; cp "$DOTFILES_DIR/$f" "$dir/$f"; }
         done
         echo -e "${GREEN}备份至: $dir${NC}"
         ;;

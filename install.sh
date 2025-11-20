@@ -179,12 +179,19 @@ install_zsh_plugins() {
 
 install_zsh_plugins
 
+# 链接 manage.sh 到 HOME 目录
+echo -e "\n${GREEN}设置管理脚本...${NC}"
+if [ -f "$DOTFILES_DIR/manage.sh" ]; then
+    ln -sf "$DOTFILES_DIR/manage.sh" "$HOME/manage.sh"
+    chmod +x "$HOME/manage.sh"
+    echo -e "${GREEN}✓ manage.sh 已链接到 ~/manage.sh${NC}"
+fi
+
 # 完成
 echo -e "\n${GREEN}✓ 安装完成!${NC}"
 echo -e "${BLUE}提示:${NC}"
 echo -e "  - 重启终端或运行: ${YELLOW}source ~/.zshrc${NC}"
 echo -e "  - 配置 p10k: ${YELLOW}p10k configure${NC}"
-echo -e "  - 管理 dotfiles: ${YELLOW}cd $DOTFILES_DIR && ./manage.sh${NC}"
+echo -e "  - 管理 dotfiles: ${YELLOW}~/manage.sh${NC}"
 [ "$backup_needed" = true ] && echo -e "  - 备份位于: ${YELLOW}$BACKUP_DIR${NC}"
-# 改进：添加卸载提示
-echo -e "  - 卸载: ${YELLOW}rm -rf $DOTFILES_DIR && 恢复备份${NC}"
+echo -e "  - 卸载: ${YELLOW}rm -rf $DOTFILES_DIR ~/manage.sh && 恢复备份${NC}"

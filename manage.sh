@@ -33,7 +33,7 @@ dotfiles() {
 
 show_help() {
     echo -e "${BLUE}Dotfiles 管理工具${NC}\n"
-    echo "使用方法: $0 [命令] [参数]\n"
+    printf "使用方法: %s [命令] [参数]\n\n" "$0"
     echo "命令:"
     echo "  status       - 查看状态"
     echo "  add [文件]   - 添加文件"

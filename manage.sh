@@ -72,9 +72,9 @@ dotfiles_push() {
     
     local PUSH_OUTPUT
     if [ -z "$UPSTREAM" ]; then
-        PUSH_OUTPUT=$(timeout 120 dotfiles push -u origin "$BRANCH" 2>&1)
+        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$HOME" push -u origin "$BRANCH" 2>&1)
     else
-        PUSH_OUTPUT=$(timeout 120 dotfiles push 2>&1)
+        PUSH_OUTPUT=$(timeout 120 /usr/bin/git -C "$HOME" push 2>&1)
     fi
     
     local CODE=$?
@@ -87,7 +87,7 @@ dotfiles_push() {
         echo -e "${RED}本地落后于远程${NC}"
         read -p "立即拉取并重试? (y/N): " -n 1 -r
         echo
-        [[ $REPLY =~ ^[Yy]$ ]] && dotfiles pull origin "$BRANCH" && dotfiles push
+        [[ $REPLY =~ ^[Yy]$ ]] && dotfiles pull origin "$BRANCH" && /usr/bin/git -C "$HOME" push
     else
         echo "$PUSH_OUTPUT"
         echo -e "${RED}推送失败${NC}"

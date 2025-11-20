@@ -22,13 +22,12 @@
 
 使用 curl（推荐）:
 ```bash
-# 修复：分支名应为 main 而非 master（GitHub 新默认分支）
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/master/install.sh)"
 ```
 
 或使用 wget:
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/tsaitang404/dotfile/main/install.sh)"
+bash -c "$(wget -qO- https://raw.githubusercontent.com/tsaitang404/dotfile/master/install.sh)"
 ```
 
 安装脚本会自动：
@@ -45,7 +44,7 @@ bash -c "$(wget -qO- https://raw.githubusercontent.com/tsaitang404/dotfile/main/
 
 ```bash
 # 下载安装脚本
-curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/main/install.sh -o /tmp/install.sh
+curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/master/install.sh -o /tmp/install.sh
 
 # 运行安装
 bash /tmp/install.sh
@@ -211,10 +210,10 @@ ping raw.githubusercontent.com
 
 # 方案 2: 使用镜像（中国大陆用户）
 # 修复：镜像 URL 格式
-bash -c "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/tsaitang404/dotfile/main/install.sh)"
+bash -c "$(curl -fsSL https://ghproxy.com/https://raw.githubusercontent.com/tsaitang404/dotfile/master/install.sh)"
 
 # 或使用 jsdelivr CDN
-bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/tsaitang404/dotfile@main/install.sh)"
+bash -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/tsaitang404/dotfile@master/install.sh)"
 
 # 方案 3: 手动下载后安装（见上方"手动安装"）
 ```
@@ -311,7 +310,7 @@ fi
 
 ```bash
 # 在新机器上直接运行一键安装命令
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/main/install.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/tsaitang404/dotfile/master/install.sh)"
 
 # 如果有本地修改需要保留
 cd ~/.dotfiles

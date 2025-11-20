@@ -135,7 +135,8 @@ for dir in "${dotdirs[@]}"; do
             echo
             [[ ! $REPLY =~ ^[Yy]$ ]] && continue
         fi
-        rm -rf "$HOME/$dir"
+        # 安全检查：确保 dir 不为空
+        rm -rf "$HOME/${dir:?}"
         ln -sf "$DOTFILES_DIR/$dir" "$HOME/$dir"
         echo -e "  链接 $dir"
         ((linked_count++))

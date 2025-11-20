@@ -46,14 +46,32 @@ show_help() {
 }
 
 ensure_ssh_agent() {
-    local KEY="$HOME/.ssh/TT"
-    [ ! -f "$KEY" ] && { echo -e "${RED}错误: 私钥不存在${NC}" >&2; return 1; }
-    chmod 600 "$KEY" 2>/dev/null
+    # 尝试常见的 SSH 密钥位置
+    local KEYS=(
+        "$HOME/.ssh/ssh_key"      # .ssh/config 中指定的密钥
+        "$HOME/.ssh/id_ed25519"   # 现代默认密钥
+        "$HOME/.ssh/id_rsa"       # 传统默认密钥
+        "$HOME/.ssh/TT"           # 自定义密钥
+    )
+    
+    # 检查是否已经有密钥加载
     [ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s)" >/dev/null
     ssh-add -l >/dev/null 2>&1 && return 0
-    [ -t 0 ] || { echo -e "${RED}非交互式环境，请手动运行: ssh-add $KEY${NC}" >&2; return 1; }
-    echo -e "${YELLOW}加载私钥${NC}"
-    ssh-add "$KEY"
+    
+    # 尝试找到并加载密钥
+    local KEY_FOUND=""
+    for key in "${KEYS[@]}"; do
+        if [ -f "$key" ]; then
+            KEY_FOUND="$key"
+            chmod 600 "$key" 2>/dev/null
+            break
+        fi
+    done
+    
+    [ -z "$KEY_FOUND" ] && { echo -e "${RED}错误: 未找到 SSH 私钥${NC}" >&2; return 1; }
+    [ -t 0 ] || { echo -e "${RED}非交互式环境，请手动运行: ssh-add $KEY_FOUND${NC}" >&2; return 1; }
+    echo -e "${YELLOW}加载私钥: $KEY_FOUND${NC}"
+    ssh-add "$KEY_FOUND"
 }
 
 dotfiles_add() {

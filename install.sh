@@ -2,130 +2,189 @@
 
 # 安装dotfiles的脚本
 
-# 颜色
+# 颜色定义
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# 检查git是否安装
-if ! command -v git &> /dev/null; then
-    echo -e "${RED}Git未安装. 请先安装Git.${NC}"
-    exit 1
-fi
+# 错误处理：遇到错误立即退出
+set -e
+trap 'echo -e "${RED}安装失败，请检查错误信息${NC}"' ERR
+
+# 检查依赖
+check_dependencies() {
+    local missing=()
+    for cmd in git curl; do
+        command -v "$cmd" &>/dev/null || missing+=("$cmd")
+    done
+    
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo -e "${RED}缺少依赖: ${missing[*]}${NC}"
+        echo -e "${YELLOW}请先安装: sudo pacman -S ${missing[*]}${NC}"
+        exit 1
+    fi
+}
 
 # 设置变量
 DOTFILES_REPO="git@github.com:tsaitang404/dotfile.git"
 DOTFILES_DIR="$HOME/.dotfiles"
-BACKUP_DIR="$HOME/.dotfiles-backup"
+BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d_%H%M%S)"
 
 # 显示欢迎信息
-echo -e "${BLUE}=== 欢迎使用dotfiles安装脚本 ===${NC}"
-echo -e "${YELLOW}这个脚本将会安装dotfiles到您的HOME目录${NC}"
+echo -e "${BLUE}=== Dotfiles 安装脚本 ===${NC}"
+echo -e "${YELLOW}仓库: $DOTFILES_REPO${NC}"
+echo -e "${YELLOW}目标: $DOTFILES_DIR${NC}\n"
 
-# 克隆仓库(如果尚未克隆)
+# 检查依赖
+check_dependencies
+
+# 克隆或更新仓库
 if [ ! -d "$DOTFILES_DIR" ]; then
-    echo -e "${GREEN}正在克隆dotfiles仓库...${NC}"
-    git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+    echo -e "${GREEN}克隆仓库...${NC}"
+    # 改进：避免 grep 失败导致 set -e 退出
+    if timeout 5 ssh -T git@github.com 2>&1 | grep -q "successfully authenticated" || true; then
+        : # SSH 可用，保持原 URL
+    else
+        echo -e "${YELLOW}SSH 认证失败，尝试 HTTPS 克隆${NC}"
+        DOTFILES_REPO="https://github.com/tsaitang404/dotfile.git"
+    fi
+    git clone "$DOTFILES_REPO" "$DOTFILES_DIR" || {
+        echo -e "${RED}克隆失败，请检查网络和 SSH 密钥${NC}"
+        exit 1
+    }
 else
-    echo -e "${YELLOW}dotfiles仓库已存在，跳过克隆.${NC}"
+    echo -e "${YELLOW}仓库已存在${NC}"
+    # 修复：添加 -r 选项和默认值说明
+    read -p "是否更新仓库? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        (cd "$DOTFILES_DIR" && git pull) || echo -e "${YELLOW}更新失败，继续使用现有版本${NC}"
+    fi
 fi
 
-# 进入dotfiles目录
-cd "$DOTFILES_DIR" || exit
+cd "$DOTFILES_DIR" || exit 1
 
-# 定义需要链接的文件列表
-dotfiles=(
-    ".bashrc"
-    ".zshrc"
-    ".vimrc"
-    ".gitconfig"
-    ".gitignore"
-    ".tmux.conf"
-    ".p10k.zsh"
-    ".Xresources"
-    ".bash_profile"
-    ".fehbg"
-    ".gtkrc-2.0"
-    ".npmrc"
-    ".xinitrc"
-    ".xprofile"
-)
+# 定义配置文件
+echo -e "${GREEN}检测配置文件...${NC}"
+# 改进：添加错误处理，避免空数组
+mapfile -t dotfiles < <(git ls-files 2>/dev/null | grep -E '^\.[^/]+$' | grep -vE '^\.(git|DS_Store|gitignore|gitmodules)$' || true)
+mapfile -t dotdirs < <(git ls-files 2>/dev/null | cut -d/ -f1 | grep '^\.' | sort -u | grep -vE '^\.(git|DS_Store)$' || true)
 
-# 定义需要链接的目录列表
-dotdirs=(
-    ".config"
-    ".ssh"
-)
+# 改进：检查是否有文件
+if [ ${#dotfiles[@]} -eq 0 ] && [ ${#dotdirs[@]} -eq 0 ]; then
+    echo -e "${RED}未检测到配置文件，请检查仓库结构${NC}"
+    exit 1
+fi
 
-# 备份现有文件和目录
-echo -e "${GREEN}备份可能会被覆盖的文件...${NC}"
-mkdir -p "$BACKUP_DIR"
+echo -e "${BLUE}发现文件: ${#dotfiles[@]} 个${NC}"
+echo -e "${BLUE}发现目录: ${#dotdirs[@]} 个${NC}\n"
 
+# 备份现有文件
+backup_needed=false
 for file in "${dotfiles[@]}"; do
-    if [ -f "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
-        echo -e "${YELLOW}备份 $file${NC}"
-        mv "$HOME/$file" "$BACKUP_DIR/"
-    fi
+    [ -e "$HOME/$file" ] && [ ! -L "$HOME/$file" ] && backup_needed=true && break
+done
+for dir in "${dotdirs[@]}"; do
+    [ -e "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ] && backup_needed=true && break
 done
 
-for dir in "${dotdirs[@]}"; do
-    if [ -d "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ]; then
-        echo -e "${YELLOW}备份 $dir${NC}"
-        mv "$HOME/$dir" "$BACKUP_DIR/"
-    fi
-done
+if [ "$backup_needed" = true ]; then
+    echo -e "${YELLOW}备份现有文件到: $BACKUP_DIR${NC}"
+    mkdir -p "$BACKUP_DIR"
+    
+    for file in "${dotfiles[@]}"; do
+        if [ -e "$HOME/$file" ] && [ ! -L "$HOME/$file" ]; then
+            echo -e "  备份 $file"
+            cp -a "$HOME/$file" "$BACKUP_DIR/"
+        fi
+    done
+    
+    for dir in "${dotdirs[@]}"; do
+        if [ -e "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ]; then
+            echo -e "  备份 $dir"
+            cp -a "$HOME/$dir" "$BACKUP_DIR/"
+        fi
+    done
+fi
 
 # 创建符号链接
-echo -e "${GREEN}创建符号链接...${NC}"
+echo -e "\n${GREEN}创建符号链接...${NC}"
+# 修复：local 只能在函数内使用，脚本主体应使用普通变量
+linked_count=0
 
 for file in "${dotfiles[@]}"; do
-    if [ -f "$DOTFILES_DIR/$file" ]; then
-        echo -e "${GREEN}链接 $file${NC}"
+    if [ -e "$DOTFILES_DIR/$file" ]; then
+        if [ -L "$HOME/$file" ] || [ -f "$HOME/$file" ]; then
+            rm -f "$HOME/$file"
+        elif [ -d "$HOME/$file" ]; then
+            echo -e "${RED}警告: $file 是目录，跳过${NC}"
+            continue
+        fi
         ln -sf "$DOTFILES_DIR/$file" "$HOME/$file"
+        echo -e "  链接 $file"
+        ((linked_count++))
     fi
 done
 
 for dir in "${dotdirs[@]}"; do
-    if [ -d "$DOTFILES_DIR/$dir" ]; then
-        echo -e "${GREEN}链接 $dir${NC}"
+    if [ -e "$DOTFILES_DIR/$dir" ]; then
+        if [ -e "$HOME/$dir" ] && [ ! -L "$HOME/$dir" ]; then
+            read -p "  $dir 已存在且未备份，是否覆盖? (y/N): " -n 1 -r
+            echo
+            [[ ! $REPLY =~ ^[Yy]$ ]] && continue
+        fi
+        rm -rf "$HOME/$dir"
         ln -sf "$DOTFILES_DIR/$dir" "$HOME/$dir"
+        echo -e "  链接 $dir"
+        ((linked_count++))
     fi
 done
 
+echo -e "${GREEN}共创建 $linked_count 个符号链接${NC}"
+
+# 安装依赖（优化：并行克隆）
+install_zsh_plugins() {
+    local plugins_dir="$HOME/.config/zsh/plugins"
+    local themes_dir="$HOME/.config/zsh/themes"
+    
+    mkdir -p "$plugins_dir" "$themes_dir"
+    
+    declare -A repos=(
+        ["$plugins_dir/zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions"
+        ["$plugins_dir/zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting"
+        ["$themes_dir/powerlevel10k"]="https://github.com/romkatv/powerlevel10k"
+    )
+    
+    echo -e "\n${GREEN}安装 Zsh 插件和主题...${NC}"
+    # 修复：记录并发进程 PID，检查克隆是否成功
+    local pids=()
+    for dir in "${!repos[@]}"; do
+        if [ ! -d "$dir" ]; then
+            echo -e "  安装 $(basename "$dir")"
+            git clone --depth=1 "${repos[$dir]}" "$dir" &>/dev/null &
+            pids+=($!)
+        fi
+    done
+    
+    # 等待所有克隆完成并检查状态
+    local failed=0
+    for pid in "${pids[@]}"; do
+        wait "$pid" || ((failed++))
+    done
+    
+    [ $failed -gt 0 ] && echo -e "${YELLOW}部分插件安装失败，可手动重试${NC}"
+}
+
+install_zsh_plugins
+
 # 完成
-echo -e "${GREEN}完成! dotfiles已安装.${NC}"
-echo -e "${YELLOW}所有配置文件都已通过符号链接连接到仓库.${NC}"
-echo -e "${YELLOW}您可以在 $DOTFILES_DIR 中管理您的dotfiles.${NC}"
-echo ""
-echo -e "${BLUE}=== 依赖检查 ===${NC}"
-
-# 检查Zsh插件
-echo -e "${GREEN}检查Zsh插件...${NC}"
-if [ ! -d "$HOME/.config/zsh/plugins/zsh-autosuggestions" ]; then
-    echo -e "${YELLOW}zsh-autosuggestions 插件缺失，正在安装...${NC}"
-    mkdir -p "$HOME/.config/zsh/plugins"
-    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.config/zsh/plugins/zsh-autosuggestions"
-fi
-
-if [ ! -d "$HOME/.config/zsh/plugins/zsh-syntax-highlighting" ]; then
-    echo -e "${YELLOW}zsh-syntax-highlighting 插件缺失，正在安装...${NC}"
-    mkdir -p "$HOME/.config/zsh/plugins"
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.config/zsh/plugins/zsh-syntax-highlighting"
-fi
-
-# 检查Powerlevel10k主题
-if [ ! -d "$HOME/.config/zsh/themes/powerlevel10k" ]; then
-    echo -e "${YELLOW}Powerlevel10k 主题缺失，正在安装...${NC}"
-    mkdir -p "$HOME/.config/zsh/themes"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/.config/zsh/themes/powerlevel10k"
-fi
-
-echo -e "${GREEN}依赖检查完成!${NC}"
-echo ""
+echo -e "\n${GREEN}✓ 安装完成!${NC}"
 echo -e "${BLUE}提示:${NC}"
-echo -e "${YELLOW}- 如果Powerlevel10k主题显示异常，请运行: p10k configure${NC}"
-echo -e "${YELLOW}- 确保安装了 Nerd Font 字体以获得最佳显示效果${NC}"
-echo -e "${YELLOW}- 如果需要重新配置主题，运行: p10k configure${NC}"
-echo -e "${YELLOW}- 要管理dotfiles，请进入 $DOTFILES_DIR 目录使用git命令或 ./manage.sh 脚本${NC}"
+echo -e "  - 重启终端或运行: ${YELLOW}source ~/.zshrc${NC}"
+echo -e "  - 配置 p10k: ${YELLOW}p10k configure${NC}"
+echo -e "  - 管理 dotfiles: ${YELLOW}cd $DOTFILES_DIR && ./manage.sh${NC}"
+[ "$backup_needed" = true ] && echo -e "  - 备份位于: ${YELLOW}$BACKUP_DIR${NC}"
+# 改进：添加卸载提示
+echo -e "  - 卸载: ${YELLOW}rm -rf $DOTFILES_DIR && 恢复备份${NC}"
